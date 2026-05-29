@@ -535,24 +535,13 @@
 
   async function enforceHardcodedBans() {
     for (const bannedId of HARDCODED_BANS) {
-      // 1. Write to banned node
       fetch(`${DB_URL}/banned/${bannedId}.json`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason: 'hardcoded ban', bannedAt: Date.now() })
       });
-      // 2. Delete duck record
       fetch(`${DB_URL}/ducks/${bannedId}.json`, { method: 'DELETE' });
-      // 3. Remove referredBy from anyone they referred
-      try {
-        const all = await fetch(`${DB_URL}/ducks.json`).then(r => r.json());
-        if (!all) continue;
-        for (const [id, data] of Object.entries(all)) {
-          if (data && data.referredBy === bannedId) {
-            fetch(`${DB_URL}/ducks/${id}/referredBy.json`, { method: 'DELETE' });
-          }
-        }
-      } catch(e) {}
+      fetch(`${DB_URL}/meta/cloud/${bannedId}.json`, { method: 'DELETE' });
+      fetch(`${DB_URL}/leaderboard/${bannedId}.json`, { method: 'DELETE' });
     }
   }
 
@@ -620,25 +609,35 @@
     b.className = 'status-badge ' + type;
     document.getElementById('statusText').textContent = text;
   }
-  async function fetchAllDucks() {
-    const r = await fetch(`${DB_URL}/ducks.json`);
-    return await r.json() || {};
+  // ---- Lean DB fetches — never fetch all ducks ----
+  async function fetchCount() {
+    const r = await fetch(`${DB_URL}/meta/count.json`);
+    return (await r.json()) || 0;
+  }
+  async function fetchCloud() {
+    const r = await fetch(`${DB_URL}/meta/cloud.json`);
+    return (await r.json()) || {};
+  }
+  async function fetchLeaderboard() {
+    const r = await fetch(`${DB_URL}/leaderboard.json`);
+    return (await r.json()) || {};
+  }
+  async function fetchMyDuck(deviceId) {
+    const r = await fetch(`${DB_URL}/ducks/${deviceId}.json`);
+    return await r.json();
   }
 
   // ---- Firebase ops ----
   async function registerDuck(deviceId) {
     if (new URLSearchParams(location.search).get('unquacked')) return null;
-    // Check if banned
     const banRes = await fetch(`${DB_URL}/banned/${deviceId}.json`);
-    const banData = await banRes.json();
-    if (banData) return 'banned';
-    const r = await fetch(`${DB_URL}/ducks/${deviceId}.json`);
-    const existing = await r.json();
-    if (existing) return { isNew: false, duckNumber: existing.duckNumber };
+    if (await banRes.json()) return 'banned';
 
-    const all = await fetchAllDucks();
-    const duckNumber = Object.keys(all).length + 1;
+    const existing = await fetchMyDuck(deviceId);
+    if (existing) return { isNew: false, duckNumber: existing.duckNumber, referredBy: existing.referredBy || null };
 
+    const currentCount = await fetchCount();
+    const duckNumber = currentCount + 1;
     const payload = { joinedAt: Date.now(), duckNumber, nickname: null };
     if (pendingRef && pendingRef !== deviceId) payload.referredBy = pendingRef;
 
@@ -646,24 +645,61 @@
       method: 'PUT', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+    await fetch(`${DB_URL}/meta/count.json`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(duckNumber)
+    });
+    await fetch(`${DB_URL}/meta/cloud/${deviceId}.json`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nickname: null, duckNumber })
+    });
+    await fetch(`${DB_URL}/leaderboard/${deviceId}.json`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nickname: null, duckNumber, quacks: 0 })
+    });
+    if (pendingRef && pendingRef !== deviceId) {
+      const refLb = await fetch(`${DB_URL}/leaderboard/${pendingRef}.json`).then(r => r.json());
+      if (refLb) {
+        await fetch(`${DB_URL}/leaderboard/${pendingRef}/quacks.json`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify((refLb.quacks || 0) + 1)
+        });
+      }
+    }
     if (pendingRef) sessionStorage.removeItem('quack_ref');
     return { isNew: true, duckNumber };
   }
 
   async function saveNickname(deviceId, nickname) {
+    const val = nickname || null;
     await fetch(`${DB_URL}/ducks/${deviceId}/nickname.json`, {
       method: 'PUT', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(nickname)
+      body: JSON.stringify(val)
+    });
+    await fetch(`${DB_URL}/meta/cloud/${deviceId}/nickname.json`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(val)
+    });
+    await fetch(`${DB_URL}/leaderboard/${deviceId}/nickname.json`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(val)
     });
   }
 
   async function deleteDuck(deviceId) {
     await fetch(`${DB_URL}/ducks/${deviceId}.json`, { method: 'DELETE' });
+    await fetch(`${DB_URL}/meta/cloud/${deviceId}.json`, { method: 'DELETE' });
+    await fetch(`${DB_URL}/leaderboard/${deviceId}.json`, { method: 'DELETE' });
+    const c = await fetchCount();
+    if (c > 0) await fetch(`${DB_URL}/meta/count.json`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(c - 1)
+    });
   }
 
   // ---- Count how many ducks were referred by a given id ----
-  function countQuacks(allDucks, deviceId) {
-    return Object.values(allDucks).filter(d => d.referredBy === deviceId).length;
+  function countQuacks(lb, deviceId) {
+    return (lb[deviceId] && lb[deviceId].quacks) || 0;
   }
 
   // ---- Seeded random ----
@@ -776,13 +812,13 @@
   }
 
   // ---- Leaderboard ----
-  function buildLeaderboard(allDucks, myDeviceId) {
+  function buildLeaderboard(lb, myDeviceId) {
     const list = document.getElementById('lbList');
     list.innerHTML = '';
 
-    const entries = Object.entries(allDucks).map(([id, data]) => ({
+    const entries = Object.entries(lb).map(([id, data]) => ({
       id, data,
-      quacks: countQuacks(allDucks, id),
+      quacks: data.quacks || 0,
       name: (data.nickname && data.nickname.trim()) ? data.nickname.trim() : (!data.duckNumber ? '👑 OG Duck' : 'Duck #' + data.duckNumber),
     }));
 
@@ -927,32 +963,19 @@
     document.getElementById('messageBox').textContent = _messageText;
 
     async function refreshAll() {
-      const all = await fetchAllDucks();
-      // Update personalised message in case nickname changed
       _messageText = buildMessageText(deviceId, _currentPlatform);
       document.getElementById('messageBox').textContent = _messageText;
-      buildCloud(all);
-      buildLeaderboard(all, deviceId);
-      // Update my quacks count
-      const myQ = countQuacks(all, deviceId);
-      const badge = document.getElementById('myQuacksBadge');
-      document.getElementById('myQuacksCount').textContent = myQ;
-      badge.style.display = 'inline-flex';
+      const [cloud, lb] = await Promise.all([fetchCloud(), fetchLeaderboard()]);
+      buildCloud(cloud);
+      buildLeaderboard(lb, deviceId);
+      document.getElementById('myQuacksCount').textContent = countQuacks(lb, deviceId);
+      document.getElementById('myQuacksBadge').style.display = 'inline-flex';
     }
 
     initAccountCard(deviceId, refreshAll);
 
     try {
       const registration = await registerDuck(deviceId);
-      const all = await fetchAllDucks();
-      const count = Object.keys(all).length;
-
-      const counterEl = document.getElementById('counter');
-      counterEl.textContent = count;
-      bumpCounter(counterEl);
-
-      buildCloud(all);
-      buildLeaderboard(all, deviceId);
 
       // Unquacked state
       if (!registration) {
@@ -969,27 +992,38 @@
         document.getElementById('myQuacksBadge').style.display = 'none';
         document.querySelector('.message-card').style.display = 'none';
         setStatus('loading', '🚫 You have been banned from the flock.');
-        // Clear their local ID so they can't just refresh with a new one trivially
         localStorage.removeItem(DEVICE_KEY);
         return;
       }
 
-      const { isNew, duckNumber } = registration;
+      const { isNew, duckNumber, referredBy } = registration;
 
-      const myQ = countQuacks(all, deviceId);
+      // Fetch lean nodes in parallel — tiny payloads
+      const [count, cloud, lb] = await Promise.all([
+        fetchCount(),
+        fetchCloud(),
+        fetchLeaderboard(),
+      ]);
+
+      const counterEl = document.getElementById('counter');
+      counterEl.textContent = count;
+      bumpCounter(counterEl);
+
+      buildCloud(cloud);
+      buildLeaderboard(lb, deviceId);
+
+      const myQ = countQuacks(lb, deviceId);
       document.getElementById('myQuacksCount').textContent = myQ;
       document.getElementById('myQuacksBadge').style.display = 'inline-flex';
 
       // Show who quacked you
-      const myData = all[deviceId];
-      if (myData && myData.referredBy && all[myData.referredBy]) {
-        const referrer = all[myData.referredBy];
+      if (referredBy && lb[referredBy]) {
+        const referrer = lb[referredBy];
         const referrerName = (referrer.nickname && referrer.nickname.trim())
           ? referrer.nickname.trim()
           : (!referrer.duckNumber ? '👑 OG Duck' : 'Duck #' + referrer.duckNumber);
-        const qby = document.getElementById('quackedByBadge');
         document.getElementById('quackedByName').textContent = referrerName;
-        qby.style.display = 'inline-flex';
+        document.getElementById('quackedByBadge').style.display = 'inline-flex';
       }
 
       if (isNew) {
@@ -1002,23 +1036,24 @@
         }, 1800);
       } else {
         setStatus('returning', duckNumber ? `👋 Welcome back, Duck #${duckNumber}!` : '👑 Welcome back, OG Duck!');
-        if (!duckNumber && (!myData || !myData.nickname || !myData.nickname.trim())) {
+        const myCloudData = cloud[deviceId];
+        if (!duckNumber && (!myCloudData || !myCloudData.nickname || !myCloudData.nickname.trim())) {
           showNicknameModal(deviceId, { onDone: refreshAll });
         }
       }
 
-      // Poll every 5s
+      // Poll every 10s — only lean nodes
       setInterval(async () => {
-        const fresh = await fetchAllDucks();
-        const c = Object.keys(fresh).length;
-        if (c !== parseInt(counterEl.textContent)) {
-          counterEl.textContent = c; bumpCounter(counterEl);
+        const [freshCount, freshCloud, freshLb] = await Promise.all([
+          fetchCount(), fetchCloud(), fetchLeaderboard()
+        ]);
+        if (freshCount !== parseInt(counterEl.textContent)) {
+          counterEl.textContent = freshCount; bumpCounter(counterEl);
         }
-        buildCloud(fresh);
-        buildLeaderboard(fresh, deviceId);
-        const myQ = countQuacks(fresh, deviceId);
-        document.getElementById('myQuacksCount').textContent = myQ;
-      }, 5000);
+        buildCloud(freshCloud);
+        buildLeaderboard(freshLb, deviceId);
+        document.getElementById('myQuacksCount').textContent = countQuacks(freshLb, deviceId);
+      }, 10000);
 
     } catch (e) {
       setStatus('loading', "⚠️ Couldn't reach the flock");
