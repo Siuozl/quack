@@ -33,7 +33,6 @@
       position: relative;
     }
 
-    /* animated background */
     body::before {
       content: '';
       position: fixed;
@@ -77,6 +76,46 @@
       gap: 2rem;
       max-width: 600px;
       width: 100%;
+    }
+
+    /* Homepage button */
+    .top-bar {
+      display: flex;
+      justify-content: center;
+      padding: 0.75rem 1rem 0;
+      width: 100%;
+    }
+
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.5rem 1.2rem;
+      background: rgba(255,214,0,0.08);
+      border: 1px solid rgba(255,214,0,0.25);
+      border-radius: 999px;
+      color: var(--muted);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+    }
+
+    .home-btn:hover {
+      background: rgba(255,214,0,0.15);
+      border-color: rgba(255,214,0,0.5);
+      color: var(--yellow);
+      transform: translateY(-1px);
+    }
+
+    .home-btn svg {
+      width: 13px; height: 13px;
+      fill: currentColor;
+      flex-shrink: 0;
     }
 
     /* Header */
@@ -171,9 +210,7 @@
       transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1);
     }
 
-    .counter-number.bump {
-      transform: scale(1.12);
-    }
+    .counter-number.bump { transform: scale(1.12); }
 
     .counter-sub {
       font-size: 0.85rem;
@@ -235,7 +272,203 @@
       50%       { opacity: 0.4; transform: scale(0.6); }
     }
 
-    /* Splash overlay for new ducks */
+    /* ---- DUCK CLOUD ---- */
+    .duck-cloud-wrap {
+      width: 100%;
+      animation: popIn 0.6s 0.2s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    .duck-cloud-label {
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.7rem;
+      text-align: center;
+    }
+
+    .duck-cloud-outer {
+      position: relative;
+      width: 100%;
+      height: 160px;
+      background: var(--card);
+      border: 2px solid rgba(255,214,0,0.12);
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .duck-cloud-outer:active { cursor: grabbing; }
+
+    /* fade edges */
+    .duck-cloud-outer::before,
+    .duck-cloud-outer::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 48px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .duck-cloud-outer::before {
+      left: 0;
+      background: linear-gradient(to right, var(--card), transparent);
+    }
+    .duck-cloud-outer::after {
+      right: 0;
+      background: linear-gradient(to left, var(--card), transparent);
+    }
+
+    .duck-cloud-inner {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      /* width set by JS */
+      will-change: transform;
+    }
+
+    .duck-name-tag {
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      pointer-events: none;
+      border: 1px solid;
+      animation: nameFloat ease-in-out infinite alternate;
+    }
+
+    @keyframes nameFloat {
+      from { transform: translateY(0px); }
+      to   { transform: translateY(-7px); }
+    }
+
+    .scroll-hint {
+      text-align: center;
+      font-size: 0.7rem;
+      color: rgba(184,160,96,0.4);
+      margin-top: 0.45rem;
+      letter-spacing: 0.06em;
+    }
+
+    /* ---- NICKNAME MODAL ---- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      animation: fadeIn 0.25s ease both;
+    }
+
+    .modal-backdrop.hidden { display: none; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .modal {
+      background: var(--card);
+      border: 2px solid rgba(255,214,0,0.25);
+      border-radius: 24px;
+      padding: 2.2rem 2rem;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,214,0,0.08);
+      animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    .modal-duck { font-size: 3.5rem; display: block; margin-bottom: 0.5rem; }
+
+    .modal-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.8rem;
+      color: var(--yellow);
+      margin-bottom: 0.3rem;
+    }
+
+    .modal-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.4rem;
+      line-height: 1.5;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 0.85rem 1.1rem;
+      background: rgba(0,0,0,0.35);
+      border: 2px solid rgba(255,214,0,0.2);
+      border-radius: 12px;
+      color: var(--white);
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.15rem;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    .modal-input::placeholder { color: rgba(184,160,96,0.4); }
+
+    .modal-input:focus {
+      border-color: rgba(255,214,0,0.55);
+    }
+
+    .modal-btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--yellow);
+      color: var(--dark);
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.25rem;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 0 var(--orange), 0 8px 20px rgba(255,214,0,0.2);
+    }
+
+    .modal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 var(--orange), 0 12px 30px rgba(255,214,0,0.3);
+    }
+
+    .modal-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 var(--orange);
+    }
+
+    .modal-skip {
+      margin-top: 0.8rem;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      text-decoration: underline;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    .modal-skip:hover { opacity: 1; }
+
+    /* Splash overlay */
     .splash {
       position: fixed;
       inset: 0;
@@ -247,20 +480,18 @@
       z-index: 100;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s;
     }
 
     .splash.show {
-      opacity: 1;
-      pointer-events: all;
       animation: splashAnim 1.8s ease forwards;
+      pointer-events: all;
     }
 
     @keyframes splashAnim {
       0%   { opacity: 0; }
       15%  { opacity: 1; }
       70%  { opacity: 1; }
-      100% { opacity: 0; pointer-events: none; }
+      100% { opacity: 0; }
     }
 
     .splash-emoji { font-size: 8rem; animation: spin 0.6s ease; }
@@ -294,13 +525,24 @@
       margin-bottom: 1rem;
     }
 
+    .instruction-text {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--white);
+      text-align: center;
+      line-height: 1.4;
+      margin-bottom: 0.8rem;
+    }
+
+    .instruction-text span { color: var(--yellow); }
+
     .message-box {
       background: rgba(0,0,0,0.3);
       border: 1px solid rgba(255,214,0,0.1);
       border-radius: 12px;
       padding: 1.2rem 1.4rem;
-      font-family: 'Nunito', monospace;
-      font-size: 0.92rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.88rem;
       line-height: 1.7;
       color: var(--accent);
       white-space: pre-wrap;
@@ -351,72 +593,29 @@
       margin-top: 0.5rem;
       animation: popIn 0.6s 0.45s both;
     }
-
-    /* Homepage button */
-    .top-bar {
-      display: flex;
-      justify-content: center;
-      padding: 0.75rem 1rem 0;
-      width: 100%;
-    }
-
-    .home-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      padding: 0.5rem 1.2rem;
-      background: rgba(255,214,0,0.08);
-      border: 1px solid rgba(255,214,0,0.25);
-      border-radius: 999px;
-      color: var(--muted);
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.82rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-decoration: none;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
-    }
-
-    .home-btn:hover {
-      background: rgba(255,214,0,0.15);
-      border-color: rgba(255,214,0,0.5);
-      color: var(--yellow);
-      transform: translateY(-1px);
-    }
-
-    .home-btn svg {
-      width: 13px; height: 13px;
-      fill: currentColor;
-      flex-shrink: 0;
-    }
-
-    /* instruction text */
-    .instruction-text {
-      font-size: 1rem;
-      font-weight: 900;
-      color: var(--white);
-      text-align: center;
-      line-height: 1.4;
-      margin-bottom: 0.2rem;
-    }
-
-    .instruction-text span {
-      color: var(--yellow);
-    }
   </style>
 </head>
 <body>
 
-  <!-- Floating duck background -->
   <div class="floaters" id="floaters"></div>
 
-  <!-- New duck splash screen -->
+  <!-- Splash -->
   <div class="splash" id="splash">
     <span class="splash-emoji">🦆</span>
     <div class="splash-text">QUACKED!</div>
     <div class="splash-sub">You've joined the flock</div>
+  </div>
+
+  <!-- Nickname modal (shown to new ducks after registration) -->
+  <div class="modal-backdrop hidden" id="nicknameModal">
+    <div class="modal">
+      <span class="modal-duck">🦆</span>
+      <div class="modal-title">Pick a Nickname!</div>
+      <div class="modal-sub">Your name will float in the Duckie Cloud<br>for everyone to see.</div>
+      <input class="modal-input" id="nicknameInput" type="text" maxlength="20" placeholder="e.g. QuackMaster" autocomplete="off" />
+      <button class="modal-btn" id="nicknameSubmit">Join the Flock 🦆</button>
+      <button class="modal-skip" id="nicknameSkip">Skip (stay anonymous)</button>
+    </div>
   </div>
 
   <div class="container">
@@ -442,6 +641,15 @@
         <div class="dot"></div>
         <span id="statusText">Connecting to flock…</span>
       </div>
+    </div>
+
+    <!-- Duck Cloud -->
+    <div class="duck-cloud-wrap">
+      <div class="duck-cloud-label">🌤 The Duckie Cloud</div>
+      <div class="duck-cloud-outer" id="cloudOuter">
+        <div class="duck-cloud-inner" id="cloudInner"></div>
+      </div>
+      <div class="scroll-hint">← drag to scroll →</div>
     </div>
 
     <div class="message-card">
@@ -509,60 +717,218 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
     }
 
     async function registerDuck(deviceId) {
-      // Check if this device is already registered
       const checkRes = await fetch(`${DB_URL}/ducks/${deviceId}.json`);
       const existing = await checkRes.json();
+      if (existing) return { isNew: false, duckNumber: existing.duckNumber };
 
-      if (existing) {
-        return { isNew: false, duckNumber: existing.duckNumber };
-      }
-
-      // Get current count to determine this duck's number
       const countRes = await fetch(`${DB_URL}/ducks.json`);
       const allDucks = await countRes.json();
       const duckNumber = allDucks ? Object.keys(allDucks).length + 1 : 1;
 
-      // Register with their number saved
       await fetch(`${DB_URL}/ducks/${deviceId}.json`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ joinedAt: Date.now(), duckNumber })
+        body: JSON.stringify({ joinedAt: Date.now(), duckNumber, nickname: null })
       });
 
       return { isNew: true, duckNumber };
     }
 
+    async function saveNickname(deviceId, nickname) {
+      await fetch(`${DB_URL}/ducks/${deviceId}/nickname.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(nickname)
+      });
+    }
+
+    // ---- Duck Cloud ----
+    const CLOUD_COLORS = [
+      { bg: 'rgba(255,214,0,0.12)', text: '#FFD600', border: 'rgba(255,214,0,0.3)' },
+      { bg: 'rgba(255,140,0,0.12)', text: '#FF8C00', border: 'rgba(255,140,0,0.3)' },
+      { bg: 'rgba(255,230,102,0.1)', text: '#ffe066', border: 'rgba(255,230,102,0.25)' },
+      { bg: 'rgba(255,180,0,0.1)',  text: '#ffb800', border: 'rgba(255,180,0,0.25)' },
+    ];
+
+    // Deterministic random from a string seed (so positions are stable across reloads)
+    function seededRand(seed) {
+      let h = 0;
+      for (let i = 0; i < seed.length; i++) h = Math.imul(31, h) + seed.charCodeAt(i) | 0;
+      return ((h >>> 0) / 4294967296);
+    }
+
+    function buildCloud(ducks) {
+      const inner = document.getElementById('cloudInner');
+      inner.innerHTML = '';
+
+      if (!ducks || Object.keys(ducks).length === 0) {
+        inner.style.width = '100%';
+        inner.innerHTML = '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-size:0.85rem;font-weight:700;white-space:nowrap;">No ducks yet… be the first! 🦆</div>';
+        return;
+      }
+
+      const entries = Object.entries(ducks);
+      // Each "patch" is 5 ducks wide. Patches are spaced out with gaps between them.
+      const PATCH_SIZE = 5;
+      const PATCH_W = 320;   // px per patch
+      const GAP_W   = 80;    // gap between patches
+      const HEIGHT  = 160;   // cloud container height
+      const PADDING = 60;    // left/right padding inside track
+
+      const numPatches = Math.ceil(entries.length / PATCH_SIZE);
+      const totalW = PADDING + numPatches * (PATCH_W + GAP_W) + PADDING;
+      inner.style.width = totalW + 'px';
+
+      entries.forEach(([deviceId, data], i) => {
+        const patch = Math.floor(i / PATCH_SIZE);
+        const posInPatch = i % PATCH_SIZE;
+
+        // X: spread within patch with some randomness
+        const patchStartX = PADDING + patch * (PATCH_W + GAP_W);
+        const r1 = seededRand(deviceId + 'x');
+        const x = patchStartX + (posInPatch / PATCH_SIZE) * PATCH_W * 0.85 + r1 * 40;
+
+        // Y: random within safe band, seeded for stability
+        const r2 = seededRand(deviceId + 'y');
+        const tagH = 36;
+        const margin = 18;
+        const y = margin + r2 * (HEIGHT - tagH - margin * 2);
+
+        const name = (data.nickname && data.nickname.trim()) ? data.nickname.trim() : `Duck #${data.duckNumber || '?'}`;
+        const color = CLOUD_COLORS[Math.floor(seededRand(deviceId + 'c') * CLOUD_COLORS.length)];
+        const floatDur = 2.5 + seededRand(deviceId + 'f') * 2;
+        const floatDelay = seededRand(deviceId + 'd') * 2;
+
+        const tag = document.createElement('div');
+        tag.className = 'duck-name-tag';
+        tag.style.cssText = `
+          left: ${x}px;
+          top: ${y}px;
+          background: ${color.bg};
+          color: ${color.text};
+          border-color: ${color.border};
+          animation-duration: ${floatDur}s;
+          animation-delay: -${floatDelay}s;
+          font-size: ${0.8 + seededRand(deviceId + 's') * 0.25}rem;
+        `;
+        tag.textContent = '🦆 ' + name;
+        inner.appendChild(tag);
+      });
+    }
+
+    // ---- Draggable scroll ----
+    function initCloudScroll() {
+      const outer = document.getElementById('cloudOuter');
+      const inner = document.getElementById('cloudInner');
+      let isDragging = false, startX = 0, scrollLeft = 0;
+
+      outer.addEventListener('mousedown', e => {
+        isDragging = true;
+        startX = e.pageX - outer.offsetLeft;
+        scrollLeft = outer.scrollLeft;
+        outer.style.cursor = 'grabbing';
+      });
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+        outer.style.cursor = 'grab';
+      });
+      outer.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - outer.offsetLeft;
+        outer.scrollLeft = scrollLeft - (x - startX);
+      });
+
+      // Touch support
+      let touchStartX = 0, touchScrollLeft = 0;
+      outer.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].pageX;
+        touchScrollLeft = outer.scrollLeft;
+      }, { passive: true });
+      outer.addEventListener('touchmove', e => {
+        const dx = e.touches[0].pageX - touchStartX;
+        outer.scrollLeft = touchScrollLeft - dx;
+      }, { passive: true });
+
+      // Make the outer div scrollable horizontally
+      outer.style.overflowX = 'auto';
+      outer.style.overflowY = 'hidden';
+      outer.style.scrollbarWidth = 'none'; // Firefox
+      outer.style.msOverflowStyle = 'none';
+      // Webkit
+      const style = document.createElement('style');
+      style.textContent = '.duck-cloud-outer::-webkit-scrollbar { display: none; }';
+      document.head.appendChild(style);
+    }
+
+    // ---- Nickname modal ----
+    function showNicknameModal(deviceId, onDone) {
+      const modal = document.getElementById('nicknameModal');
+      const input = document.getElementById('nicknameInput');
+      const submitBtn = document.getElementById('nicknameSubmit');
+      const skipBtn = document.getElementById('nicknameSkip');
+
+      modal.classList.remove('hidden');
+      setTimeout(() => input.focus(), 100);
+
+      async function submit() {
+        const nickname = input.value.trim().slice(0, 20);
+        modal.classList.add('hidden');
+        if (nickname) await saveNickname(deviceId, nickname);
+        onDone();
+      }
+
+      submitBtn.onclick = submit;
+      skipBtn.onclick = () => { modal.classList.add('hidden'); onDone(); };
+      input.onkeydown = e => { if (e.key === 'Enter') submit(); };
+    }
+
+    // ---- Init ----
     async function init() {
       spawnFloaters();
       document.getElementById('messageBox').textContent = MESSAGE_TEXT;
+      initCloudScroll();
 
       const deviceId = getOrCreateDeviceId();
 
       try {
-        const { isNew } = await registerDuck(deviceId);
+        const { isNew, duckNumber } = await registerDuck(deviceId);
         const count = await fetchCount();
 
         const counterEl = document.getElementById('counter');
         counterEl.textContent = count;
         bumpCounter(counterEl);
 
+        // Load the cloud
+        const allRes = await fetch(`${DB_URL}/ducks.json`);
+        const allDucks = await allRes.json();
+        buildCloud(allDucks);
+
         if (isNew) {
-          setStatus('new-duck', '🦆 You joined the flock!');
-          document.getElementById('splash').classList.add('show');
-          // Remove splash class after animation
+          setStatus('new-duck', `🦆 You are Duck #${duckNumber}!`);
+          // Show splash then nickname modal
+          const splash = document.getElementById('splash');
+          splash.classList.add('show');
           setTimeout(() => {
-            document.getElementById('splash').classList.remove('show');
+            splash.classList.remove('show');
+            // After splash, show nickname modal, then refresh cloud
+            showNicknameModal(deviceId, async () => {
+              const updated = await fetch(`${DB_URL}/ducks.json`);
+              buildCloud(await updated.json());
+            });
           }, 1800);
         } else {
-          setStatus('returning', '👋 Welcome back, Duck #' + count);
+          setStatus('returning', `👋 Welcome back, Duck #${duckNumber}!`);
         }
 
-        // Live updates via polling
+        // Poll for new ducks
         setInterval(async () => {
           const c = await fetchCount();
           if (c !== parseInt(counterEl.textContent)) {
             counterEl.textContent = c;
             bumpCounter(counterEl);
+            const updated = await fetch(`${DB_URL}/ducks.json`);
+            buildCloud(await updated.json());
           }
         }, 5000);
 
@@ -579,12 +945,8 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
       navigator.clipboard.writeText(MESSAGE_TEXT).then(() => {
         btn.textContent = '✅ Copied!';
         btn.classList.add('copied');
-        setTimeout(() => {
-          btn.textContent = '🦆 Copy Message';
-          btn.classList.remove('copied');
-        }, 2000);
+        setTimeout(() => { btn.textContent = '🦆 Copy Message'; btn.classList.remove('copied'); }, 2000);
       }).catch(() => {
-        // Fallback
         const ta = document.createElement('textarea');
         ta.value = MESSAGE_TEXT;
         document.body.appendChild(ta);
@@ -593,10 +955,7 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
         document.body.removeChild(ta);
         btn.textContent = '✅ Copied!';
         btn.classList.add('copied');
-        setTimeout(() => {
-          btn.textContent = '🦆 Copy Message';
-          btn.classList.remove('copied');
-        }, 2000);
+        setTimeout(() => { btn.textContent = '🦆 Copy Message'; btn.classList.remove('copied'); }, 2000);
       });
     }
 
