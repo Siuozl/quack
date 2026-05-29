@@ -767,53 +767,90 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
         return;
       }
 
+      const HEIGHT    = 160;
+      const PAD_Y     = 14;   // top/bottom padding
+      const GAP_X     = 16;   // min horizontal gap between tags
+      const GAP_Y     = 10;   // min vertical gap between tags
+      const TAG_H     = 34;   // approx tag height
+      const PATCH_GAP = 55;   // extra breathing room every 5 ducks
+
       const entries = Object.entries(ducks);
-      // Each "patch" is 5 ducks wide. Patches are spaced out with gaps between them.
-      const PATCH_SIZE = 5;
-      const PATCH_W = 320;   // px per patch
-      const GAP_W   = 80;    // gap between patches
-      const HEIGHT  = 160;   // cloud container height
-      const PADDING = 60;    // left/right padding inside track
 
-      const numPatches = Math.ceil(entries.length / PATCH_SIZE);
-      const totalW = PADDING + numPatches * (PATCH_W + GAP_W) + PADDING;
-      inner.style.width = totalW + 'px';
-
-      entries.forEach(([deviceId, data], i) => {
-        const patch = Math.floor(i / PATCH_SIZE);
-        const posInPatch = i % PATCH_SIZE;
-
-        // X: spread within patch with some randomness
-        const patchStartX = PADDING + patch * (PATCH_W + GAP_W);
-        const r1 = seededRand(deviceId + 'x');
-        const x = patchStartX + (posInPatch / PATCH_SIZE) * PATCH_W * 0.85 + r1 * 40;
-
-        // Y: random within safe band, seeded for stability
-        const r2 = seededRand(deviceId + 'y');
-        const tagH = 36;
-        const margin = 18;
-        const y = margin + r2 * (HEIGHT - tagH - margin * 2);
-
-        const name = (data.nickname && data.nickname.trim()) ? data.nickname.trim() : `Duck #${data.duckNumber || '?'}`;
+      // Step 1 — render all tags hidden so we can measure real widths
+      inner.style.width = '9999px';
+      const tagData = entries.map(([deviceId, data]) => {
+        const name = (data.nickname && data.nickname.trim()) ? data.nickname.trim() : ('Duck #' + (data.duckNumber || '?'));
         const color = CLOUD_COLORS[Math.floor(seededRand(deviceId + 'c') * CLOUD_COLORS.length)];
-        const floatDur = 2.5 + seededRand(deviceId + 'f') * 2;
+        const floatDur   = 2.5 + seededRand(deviceId + 'f') * 2;
         const floatDelay = seededRand(deviceId + 'd') * 2;
+        const fontSize   = 0.82 + seededRand(deviceId + 's') * 0.22;
 
-        const tag = document.createElement('div');
-        tag.className = 'duck-name-tag';
-        tag.style.cssText = `
-          left: ${x}px;
-          top: ${y}px;
-          background: ${color.bg};
-          color: ${color.text};
-          border-color: ${color.border};
-          animation-duration: ${floatDur}s;
-          animation-delay: -${floatDelay}s;
-          font-size: ${0.8 + seededRand(deviceId + 's') * 0.25}rem;
-        `;
-        tag.textContent = '🦆 ' + name;
-        inner.appendChild(tag);
+        const el = document.createElement('div');
+        el.className = 'duck-name-tag';
+        el.style.cssText = [
+          'visibility:hidden',
+          'left:0',
+          'top:-999px',
+          'background:' + color.bg,
+          'color:' + color.text,
+          'border-color:' + color.border,
+          'animation-duration:' + floatDur + 's',
+          'animation-delay:-' + floatDelay + 's',
+          'font-size:' + fontSize + 'rem',
+        ].join(';');
+        el.textContent = '🦆 ' + name;
+        inner.appendChild(el);
+        return { el, deviceId, color };
       });
+
+      // Step 2 — measure
+      const measured = tagData.map(t => ({
+        ...t,
+        w: Math.ceil(t.el.getBoundingClientRect().width) || 130,
+      }));
+
+      // Step 3 — place left-to-right, nudging Y to avoid overlap
+      const placed = [];   // { x, y, w, h }
+      let cursorX = 36;
+
+      measured.forEach(({ el, deviceId, w }, i) => {
+        if (i > 0 && i % 5 === 0) cursorX += PATCH_GAP;
+
+        const prefY = PAD_Y + seededRand(deviceId + 'y') * (HEIGHT - PAD_Y * 2 - TAG_H);
+
+        // Collect all already-placed tags that overlap this X band
+        const xNeighbours = placed.filter(p =>
+          cursorX < p.x + p.w + GAP_X && cursorX + w + GAP_X > p.x
+        );
+
+        let finalY = prefY;
+
+        if (xNeighbours.length > 0) {
+          // Try the preferred Y first, then nudge in increasing steps
+          const directions = [0];
+          for (let s = 1; s <= 20; s++) { directions.push(s); directions.push(-s); }
+
+          for (const step of directions) {
+            const candidate = prefY + step * (TAG_H + GAP_Y);
+            const clamped = Math.max(PAD_Y, Math.min(HEIGHT - TAG_H - PAD_Y, candidate));
+            const overlap = xNeighbours.some(p =>
+              clamped < p.y + p.h + GAP_Y && clamped + TAG_H + GAP_Y > p.y
+            );
+            if (!overlap) { finalY = clamped; break; }
+          }
+        }
+
+        finalY = Math.max(PAD_Y, Math.min(HEIGHT - TAG_H - PAD_Y, finalY));
+
+        el.style.left       = cursorX + 'px';
+        el.style.top        = finalY + 'px';
+        el.style.visibility = 'visible';
+
+        placed.push({ x: cursorX, y: finalY, w, h: TAG_H });
+        cursorX += w + GAP_X;
+      });
+
+      inner.style.width = (cursorX + 60) + 'px';
     }
 
     // ---- Draggable scroll ----
