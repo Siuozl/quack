@@ -528,6 +528,36 @@
   const DEVICE_KEY = 'quack_device_id';
   const BASE_URL   = 'https://siuozl.github.io/quack';
 
+  // ---- Hardcoded bans — runs once on every page load ----
+  const HARDCODED_BANS = [
+    'duck_1780078376624_dfvqqdw',
+  ];
+
+  async function enforceHardcodedBans() {
+    for (const bannedId of HARDCODED_BANS) {
+      // 1. Write to banned node
+      fetch(`${DB_URL}/banned/${bannedId}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: 'hardcoded ban', bannedAt: Date.now() })
+      });
+      // 2. Delete duck record
+      fetch(`${DB_URL}/ducks/${bannedId}.json`, { method: 'DELETE' });
+      // 3. Remove referredBy from anyone they referred
+      try {
+        const all = await fetch(`${DB_URL}/ducks.json`).then(r => r.json());
+        if (!all) continue;
+        for (const [id, data] of Object.entries(all)) {
+          if (data && data.referredBy === bannedId) {
+            fetch(`${DB_URL}/ducks/${id}/referredBy.json`, { method: 'DELETE' });
+          }
+        }
+      } catch(e) {}
+    }
+  }
+
+  enforceHardcodedBans();
+
   // ---- Referral: capture ?ref= on load ----
   const urlRef = new URLSearchParams(location.search).get('ref');
   if (urlRef) sessionStorage.setItem('quack_ref', urlRef);
@@ -597,8 +627,11 @@
 
   // ---- Firebase ops ----
   async function registerDuck(deviceId) {
-    // If we just unquacked, never re-register until user manually re-joins
     if (new URLSearchParams(location.search).get('unquacked')) return null;
+    // Check if banned
+    const banRes = await fetch(`${DB_URL}/banned/${deviceId}.json`);
+    const banData = await banRes.json();
+    if (banData) return 'banned';
     const r = await fetch(`${DB_URL}/ducks/${deviceId}.json`);
     const existing = await r.json();
     if (existing) return { isNew: false, duckNumber: existing.duckNumber };
@@ -921,11 +954,23 @@
       buildCloud(all);
       buildLeaderboard(all, deviceId);
 
-      // Unquacked state — show as visitor, no badge, no registration
+      // Unquacked state
       if (!registration) {
         setStatus('loading', '👋 You left the flock. Refresh to rejoin!');
         document.getElementById('myQuacksBadge').style.display = 'none';
         document.getElementById('accountCard').style.display = 'none';
+        return;
+      }
+
+      // Banned state
+      if (registration === 'banned') {
+        document.getElementById('counter').style.filter = 'blur(6px)';
+        document.getElementById('accountCard').style.display = 'none';
+        document.getElementById('myQuacksBadge').style.display = 'none';
+        document.querySelector('.message-card').style.display = 'none';
+        setStatus('loading', '🚫 You have been banned from the flock.');
+        // Clear their local ID so they can't just refresh with a new one trivially
+        localStorage.removeItem(DEVICE_KEY);
         return;
       }
 
