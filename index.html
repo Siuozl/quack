@@ -142,6 +142,21 @@
     .my-quacks-badge span { color: var(--yellow); font-family: 'Fredoka One', cursive; font-size: 1rem; }
 
     /* ---- Message / Copy card ---- */
+    .msg-tabs {
+      display: flex; gap: 0.5rem; margin-bottom: 1rem;
+    }
+    .msg-tab {
+      flex: 1; padding: 0.5rem 0.75rem; border-radius: 10px;
+      font-family: 'Fredoka One', cursive; font-size: 0.95rem;
+      cursor: pointer; border: 1px solid rgba(255,214,0,0.2);
+      background: rgba(255,214,0,0.05); color: var(--muted);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      text-align: center;
+    }
+    .msg-tab.active {
+      background: rgba(255,214,0,0.15); color: var(--yellow);
+      border-color: rgba(255,214,0,0.4);
+    }
     .message-card {
       background: var(--card); border: 2px solid rgba(255,214,0,0.12); border-radius: 20px;
       padding: 1.8rem; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.4);
@@ -425,6 +440,7 @@
       <div class="counter-label">🦆 Ducks Quacked</div>
       <div class="counter-number" id="counter">—</div>
       <div class="counter-sub">and counting…</div>
+      <div class="counter-sub" style="margin-top:0.2rem;font-size:0.78rem;color:var(--muted);">💛 $1 to UNICEF every 100 quacks</div>
       <div class="status-badge loading" id="statusBadge">
         <div class="dot"></div>
         <span id="statusText">Connecting to flock…</span>
@@ -441,6 +457,10 @@
     <div class="message-card">
       <div class="message-title">📋 Spread the Quack</div>
       <div class="instruction-text">If you've received this, you must send the following message to <span>10 FRIENDS!</span></div>
+      <div class="msg-tabs">
+        <div class="msg-tab active" id="tabDiscord" onclick="switchTab('discord')">💬 Discord</div>
+        <div class="msg-tab" id="tabOther" onclick="switchTab('other')">📄 Other Platform</div>
+      </div>
       <div class="message-box" id="messageBox"></div>
       <button class="copy-btn" id="copyBtn" onclick="copyMessage()">🦆 Copy Message</button>
     </div>
@@ -515,9 +535,23 @@
 
   // ---- Message text — uses MY device ID so link is personalised ----
   // We build it after we know deviceId
-  function buildMessageText(deviceId) {
+  function buildMessageText(deviceId, platform = 'discord') {
     const link = BASE_URL + '?ref=' + deviceId;
-    return `# |—— QUACK INVASION ——|\n**YOU'VE BEEN 🦆 QUACKED 🦆 !**\nOpen **[this link](${link})** to add to the Quack Counter and follow the instructions on the page!\n# |—— QUACK INVASION ——|`;
+    if (platform === 'discord') {
+      return `# |—— QUACK INVASION ——|\n**YOU'VE BEEN 🦆 QUACKED 🦆 !**\nOpen **[this link](${link})** to add to the Quack Counter and follow the instructions on the page!\n💛 We donate **$1 to UNICEF** for every **100 Quacks**!\n# |—— QUACK INVASION ——|`;
+    } else {
+      return `|—— QUACK INVASION ——|\nYOU'VE BEEN 🦆 QUACKED 🦆 !\nOpen this link: ${link} to add to the Quack Counter and follow the instructions on the page!\nWe donate $1 to UNICEF for every 100 Quacks!\n|—— QUACK INVASION ——|`;
+    }
+  }
+
+  let _currentPlatform = 'discord';
+  function switchTab(platform) {
+    _currentPlatform = platform;
+    document.getElementById('tabDiscord').classList.toggle('active', platform === 'discord');
+    document.getElementById('tabOther').classList.toggle('active', platform === 'other');
+    const deviceId = getOrCreateDeviceId();
+    _messageText = buildMessageText(deviceId, platform);
+    document.getElementById('messageBox').textContent = _messageText;
   }
 
   // ---- Device ID ----
@@ -856,13 +890,13 @@
     const deviceId = getOrCreateDeviceId();
 
     // Build personalised message
-    _messageText = buildMessageText(deviceId);
+    _messageText = buildMessageText(deviceId, _currentPlatform);
     document.getElementById('messageBox').textContent = _messageText;
 
     async function refreshAll() {
       const all = await fetchAllDucks();
       // Update personalised message in case nickname changed
-      _messageText = buildMessageText(deviceId);
+      _messageText = buildMessageText(deviceId, _currentPlatform);
       document.getElementById('messageBox').textContent = _messageText;
       buildCloud(all);
       buildLeaderboard(all, deviceId);
