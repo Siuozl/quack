@@ -767,20 +767,30 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
         return;
       }
 
-      const HEIGHT    = 160;
-      const PAD_Y     = 14;   // top/bottom padding
-      const GAP_X     = 16;   // min horizontal gap between tags
-      const GAP_Y     = 10;   // min vertical gap between tags
-      const TAG_H     = 34;   // approx tag height
-      const PATCH_GAP = 55;   // extra breathing room every 5 ducks
+      const HEIGHT  = 160;
+      const PAD_X   = 36;
+      const PAD_Y   = 14;
+      const GAP_X   = 14;   // min horizontal gap
+      const GAP_Y   = 10;   // min vertical gap
+      const TAG_H   = 34;   // tag height
 
+      // Shuffle entries using seeded Fisher-Yates so order is random but stable
       const entries = Object.entries(ducks);
+      // seed from combined keys for stability
+      const shuffleSeed = entries.map(([k]) => k).join('').length;
+      const shuffled = [...entries];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(seededRand(shuffled[i][0] + 'shuffle' + i) * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
 
-      // Step 1 — render all tags hidden so we can measure real widths
+      // Render all tags hidden first so we can measure real widths
       inner.style.width = '9999px';
-      const tagData = entries.map(([deviceId, data]) => {
+      const tagData = shuffled.map(([deviceId, data]) => {
         const isOG = !data.duckNumber;
-        const name = (data.nickname && data.nickname.trim()) ? data.nickname.trim() : (isOG ? '👑 OG Duck' : ('Duck #' + data.duckNumber));
+        const name = (data.nickname && data.nickname.trim())
+          ? data.nickname.trim()
+          : (isOG ? '👑 OG Duck' : ('Duck #' + data.duckNumber));
         const color = CLOUD_COLORS[Math.floor(seededRand(deviceId + 'c') * CLOUD_COLORS.length)];
         const floatDur   = 2.5 + seededRand(deviceId + 'f') * 2;
         const floatDelay = seededRand(deviceId + 'd') * 2;
@@ -799,60 +809,60 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
           'animation-delay:-' + floatDelay + 's',
           'font-size:' + fontSize + 'rem',
         ].join(';');
-        el.textContent = '🦆 ' + name;
+        el.textContent = (isOG && !data.nickname ? '🦆 ' : '🦆 ') + name;
         inner.appendChild(el);
-        return { el, deviceId, color };
+        return { el, deviceId };
       });
 
-      // Step 2 — measure
+      // Measure real widths
       const measured = tagData.map(t => ({
         ...t,
-        w: Math.ceil(t.el.getBoundingClientRect().width) || 130,
+        w: Math.ceil(t.el.getBoundingClientRect().width) + 2, // +2 safety margin
       }));
 
-      // Step 3 — place left-to-right, nudging Y to avoid overlap
-      const placed = [];   // { x, y, w, h }
-      let cursorX = 36;
+      // ---- Grid-cloud placement ----
+      // Pack into rows greedily. Each row has a random X offset (per-duck seed)
+      // so rows don't line up perfectly — gives the "cloud" feel.
+      // We fill row by row, each duck going to whichever row currently has
+      // the least rightmost X (like a multi-column bin-pack).
 
-      measured.forEach(({ el, deviceId, w }, i) => {
-        if (i > 0 && i % 5 === 0) cursorX += PATCH_GAP;
+      const NUM_ROWS = 3;
+      const rowY = [PAD_Y, PAD_Y + (HEIGHT - PAD_Y*2 - TAG_H) / 2, HEIGHT - TAG_H - PAD_Y];
+      // cursors: rightmost filled X per row
+      const rowCursor = new Array(NUM_ROWS).fill(PAD_X);
+      // placed rects for final overlap safety check
+      const placed = [];
 
-        const prefY = PAD_Y + seededRand(deviceId + 'y') * (HEIGHT - PAD_Y * 2 - TAG_H);
-
-        // Collect all already-placed tags that overlap this X band
-        const xNeighbours = placed.filter(p =>
-          cursorX < p.x + p.w + GAP_X && cursorX + w + GAP_X > p.x
-        );
-
-        let finalY = prefY;
-
-        if (xNeighbours.length > 0) {
-          // Try the preferred Y first, then nudge in increasing steps
-          const directions = [0];
-          for (let s = 1; s <= 20; s++) { directions.push(s); directions.push(-s); }
-
-          for (const step of directions) {
-            const candidate = prefY + step * (TAG_H + GAP_Y);
-            const clamped = Math.max(PAD_Y, Math.min(HEIGHT - TAG_H - PAD_Y, candidate));
-            const overlap = xNeighbours.some(p =>
-              clamped < p.y + p.h + GAP_Y && clamped + TAG_H + GAP_Y > p.y
-            );
-            if (!overlap) { finalY = clamped; break; }
-          }
+      measured.forEach(({ el, deviceId, w }) => {
+        // Pick the row with the smallest cursor (most space on left = tightest pack)
+        // but add a tiny seeded jitter so it's not perfectly mechanical
+        const jitter = seededRand(deviceId + 'row') * 60;
+        let bestRow = 0;
+        let bestVal = rowCursor[0] + jitter;
+        for (let r = 1; r < NUM_ROWS; r++) {
+          const val = rowCursor[r] + seededRand(deviceId + 'row' + r) * 60;
+          if (val < bestVal) { bestVal = val; bestRow = r; }
         }
 
-        finalY = Math.max(PAD_Y, Math.min(HEIGHT - TAG_H - PAD_Y, finalY));
+        const x = rowCursor[bestRow];
+        let y = rowY[bestRow];
 
-        el.style.left       = cursorX + 'px';
-        el.style.top        = finalY + 'px';
+        // Small random Y nudge within the row's slot (±6px) for organic feel
+        const nudge = (seededRand(deviceId + 'yn') - 0.5) * 12;
+        y = Math.max(PAD_Y, Math.min(HEIGHT - TAG_H - PAD_Y, y + nudge));
+
+        el.style.left       = x + 'px';
+        el.style.top        = y + 'px';
         el.style.visibility = 'visible';
 
-        placed.push({ x: cursorX, y: finalY, w, h: TAG_H });
-        cursorX += w + GAP_X;
+        placed.push({ x, y, w, h: TAG_H });
+        rowCursor[bestRow] = x + w + GAP_X;
       });
 
-      inner.style.width = (cursorX + 60) + 'px';
+      const maxX = Math.max(...rowCursor);
+      inner.style.width = (maxX + 60) + 'px';
     }
+
 
     // ---- Draggable scroll ----
     function initCloudScroll() {
