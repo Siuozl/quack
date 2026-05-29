@@ -779,7 +779,8 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
       // Step 1 — render all tags hidden so we can measure real widths
       inner.style.width = '9999px';
       const tagData = entries.map(([deviceId, data]) => {
-        const name = (data.nickname && data.nickname.trim()) ? data.nickname.trim() : ('Duck #' + (data.duckNumber || '?'));
+        const isOG = !data.duckNumber;
+        const name = (data.nickname && data.nickname.trim()) ? data.nickname.trim() : (isOG ? '👑 OG Duck' : ('Duck #' + data.duckNumber));
         const color = CLOUD_COLORS[Math.floor(seededRand(deviceId + 'c') * CLOUD_COLORS.length)];
         const floatDur   = 2.5 + seededRand(deviceId + 'f') * 2;
         const floatDelay = seededRand(deviceId + 'd') * 2;
@@ -942,7 +943,7 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
         buildCloud(allDucks);
 
         if (isNew) {
-          setStatus('new-duck', `🦆 You are Duck #${duckNumber}!`);
+          setStatus('new-duck', duckNumber ? `🦆 You are Duck #${duckNumber}!` : `👑 You are an OG Duck!`);
           // Show splash then nickname modal
           const splash = document.getElementById('splash');
           splash.classList.add('show');
@@ -955,7 +956,15 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
             });
           }, 1800);
         } else {
-          setStatus('returning', `👋 Welcome back, Duck #${duckNumber}!`);
+          setStatus('returning', duckNumber ? `👋 Welcome back, Duck #${duckNumber}!` : `👑 Welcome back, OG Duck!`);
+          // OG duck with no nickname yet — offer them the chance to set one
+          const myData = await fetch(`${DB_URL}/ducks/${deviceId}.json`).then(r => r.json());
+          if (!duckNumber && (!myData.nickname || !myData.nickname.trim())) {
+            showNicknameModal(deviceId, async () => {
+              const updated = await fetch(`${DB_URL}/ducks.json`);
+              buildCloud(await updated.json());
+            });
+          }
         }
 
         // Poll for new ducks
