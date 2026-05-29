@@ -514,17 +514,22 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
       const existing = await checkRes.json();
 
       if (existing) {
-        return { isNew: false };
+        return { isNew: false, duckNumber: existing.duckNumber };
       }
 
-      // Register
+      // Get current count to determine this duck's number
+      const countRes = await fetch(`${DB_URL}/ducks.json`);
+      const allDucks = await countRes.json();
+      const duckNumber = allDucks ? Object.keys(allDucks).length + 1 : 1;
+
+      // Register with their number saved
       await fetch(`${DB_URL}/ducks/${deviceId}.json`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ joinedAt: Date.now() })
+        body: JSON.stringify({ joinedAt: Date.now(), duckNumber })
       });
 
-      return { isNew: true };
+      return { isNew: true, duckNumber };
     }
 
     async function init() {
