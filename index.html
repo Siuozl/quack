@@ -45,20 +45,13 @@
     }
 
     .floaters {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0; overflow: hidden;
     }
-
     .floater {
-      position: absolute;
-      font-size: 2rem;
-      opacity: 0;
+      position: absolute; font-size: 2rem; opacity: 0;
       animation: floatUp linear infinite;
     }
-
     @keyframes floatUp {
       0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
       10%  { opacity: 0.18; }
@@ -66,552 +59,284 @@
       100% { transform: translateY(-10vh) rotate(25deg); opacity: 0; }
     }
 
-    /* ---- Main content ---- */
+    /* ---- Layout ---- */
     .container {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
-      max-width: 600px;
-      width: 100%;
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 2rem; max-width: 600px; width: 100%;
     }
 
     /* Homepage button */
-    .top-bar {
-      display: flex;
-      justify-content: center;
-      padding: 0.75rem 1rem 0;
-      width: 100%;
-    }
-
+    .top-bar { display: flex; justify-content: center; padding: 0.75rem 1rem 0; width: 100%; }
     .home-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
+      display: inline-flex; align-items: center; gap: 0.45rem;
       padding: 0.5rem 1.2rem;
-      background: rgba(255,214,0,0.08);
-      border: 1px solid rgba(255,214,0,0.25);
-      border-radius: 999px;
-      color: var(--muted);
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.82rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-decoration: none;
-      text-transform: uppercase;
-      cursor: pointer;
+      background: rgba(255,214,0,0.08); border: 1px solid rgba(255,214,0,0.25);
+      border-radius: 999px; color: var(--muted); font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem; font-weight: 800; letter-spacing: 0.06em;
+      text-decoration: none; text-transform: uppercase; cursor: pointer;
       transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
     }
-
-    .home-btn:hover {
-      background: rgba(255,214,0,0.15);
-      border-color: rgba(255,214,0,0.5);
-      color: var(--yellow);
-      transform: translateY(-1px);
-    }
-
-    .home-btn svg {
-      width: 13px; height: 13px;
-      fill: currentColor;
-      flex-shrink: 0;
-    }
+    .home-btn:hover { background: rgba(255,214,0,0.15); border-color: rgba(255,214,0,0.5); color: var(--yellow); transform: translateY(-1px); }
+    .home-btn svg { width: 13px; height: 13px; fill: currentColor; flex-shrink: 0; }
 
     /* Header */
-    .header {
-      text-align: center;
-      animation: popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
-    }
-
+    .header { text-align: center; animation: popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
     @keyframes popIn {
       from { opacity: 0; transform: scale(0.6) translateY(30px); }
       to   { opacity: 1; transform: scale(1) translateY(0); }
     }
-
     .duck-emoji {
-      font-size: 5rem;
-      display: block;
+      font-size: 5rem; display: block;
       animation: waddle 1.8s ease-in-out infinite;
       filter: drop-shadow(0 0 20px rgba(255,214,0,0.5));
     }
-
     @keyframes waddle {
       0%, 100% { transform: rotate(-8deg) translateY(0); }
       50%       { transform: rotate(8deg) translateY(-8px); }
     }
-
     .title {
       font-family: 'Fredoka One', cursive;
-      font-size: clamp(2.8rem, 8vw, 4.5rem);
-      color: var(--yellow);
-      text-shadow:
-        0 0 30px rgba(255,214,0,0.4),
-        3px 3px 0 var(--orange),
-        6px 6px 0 rgba(255,140,0,0.3);
-      line-height: 1.05;
-      letter-spacing: 1px;
+      font-size: clamp(2.8rem, 8vw, 4.5rem); color: var(--yellow);
+      text-shadow: 0 0 30px rgba(255,214,0,0.4), 3px 3px 0 var(--orange), 6px 6px 0 rgba(255,140,0,0.3);
+      line-height: 1.05; letter-spacing: 1px;
     }
-
-    .subtitle {
-      font-size: 0.95rem;
-      color: var(--muted);
-      margin-top: 0.4rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
+    .subtitle { font-size: 0.95rem; color: var(--muted); margin-top: 0.4rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; }
 
     /* Counter card */
     .counter-card {
-      background: var(--card);
-      border: 2px solid rgba(255,214,0,0.15);
-      border-radius: 24px;
-      padding: 2.5rem 3rem;
-      width: 100%;
-      text-align: center;
-      box-shadow:
-        0 0 0 1px rgba(255,214,0,0.05),
-        0 20px 60px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,214,0,0.1);
+      background: var(--card); border: 2px solid rgba(255,214,0,0.15); border-radius: 24px;
+      padding: 2.5rem 3rem; width: 100%; text-align: center;
+      box-shadow: 0 0 0 1px rgba(255,214,0,0.05), 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,214,0,0.1);
       animation: popIn 0.6s 0.15s cubic-bezier(0.34,1.56,0.64,1) both;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
-
     .counter-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 60%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--yellow), transparent);
-      opacity: 0.4;
+      content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 60%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--yellow), transparent); opacity: 0.4;
     }
-
-    .counter-label {
-      font-size: 0.8rem;
-      font-weight: 900;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.5rem;
-    }
-
+    .counter-label { font-size: 0.8rem; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
     .counter-number {
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(5rem, 18vw, 9rem);
-      color: var(--yellow);
-      line-height: 1;
-      text-shadow:
-        0 0 40px rgba(255,214,0,0.35),
-        0 0 80px rgba(255,214,0,0.15);
+      font-family: 'Fredoka One', cursive; font-size: clamp(5rem, 18vw, 9rem); color: var(--yellow); line-height: 1;
+      text-shadow: 0 0 40px rgba(255,214,0,0.35), 0 0 80px rgba(255,214,0,0.15);
       transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1);
     }
-
     .counter-number.bump { transform: scale(1.12); }
-
-    .counter-sub {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-top: 0.4rem;
-      font-weight: 700;
-    }
+    .counter-sub { font-size: 0.85rem; color: var(--muted); margin-top: 0.4rem; font-weight: 700; }
 
     /* Status badge */
     .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.45rem 1rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-top: 1.2rem;
-      transition: all 0.4s;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.45rem 1rem; border-radius: 999px; font-size: 0.8rem; font-weight: 800;
+      letter-spacing: 0.06em; text-transform: uppercase; margin-top: 1.2rem; transition: all 0.4s;
     }
-
-    .status-badge.loading {
-      background: rgba(255,214,0,0.08);
-      color: var(--muted);
-      border: 1px solid rgba(255,214,0,0.15);
-    }
-
-    .status-badge.new-duck {
-      background: rgba(255,214,0,0.15);
-      color: var(--yellow);
-      border: 1px solid rgba(255,214,0,0.4);
-      animation: glow 1.5s ease-in-out infinite alternate;
-    }
-
-    .status-badge.returning {
-      background: rgba(255,140,0,0.1);
-      color: var(--orange);
-      border: 1px solid rgba(255,140,0,0.3);
-    }
-
+    .status-badge.loading  { background: rgba(255,214,0,0.08); color: var(--muted); border: 1px solid rgba(255,214,0,0.15); }
+    .status-badge.new-duck { background: rgba(255,214,0,0.15); color: var(--yellow); border: 1px solid rgba(255,214,0,0.4); animation: glow 1.5s ease-in-out infinite alternate; }
+    .status-badge.returning{ background: rgba(255,140,0,0.1);  color: var(--orange); border: 1px solid rgba(255,140,0,0.3); }
     @keyframes glow {
       from { box-shadow: 0 0 5px rgba(255,214,0,0.2); }
       to   { box-shadow: 0 0 18px rgba(255,214,0,0.5); }
     }
-
-    .dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: currentColor;
-      animation: pulse 1.2s ease-in-out infinite;
-    }
-
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse 1.2s ease-in-out infinite; }
     .status-badge.loading .dot { animation: none; opacity: 0.4; }
-
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
       50%       { opacity: 0.4; transform: scale(0.6); }
     }
 
     /* ---- DUCK CLOUD ---- */
-    .duck-cloud-wrap {
-      width: 100%;
-      animation: popIn 0.6s 0.2s cubic-bezier(0.34,1.56,0.64,1) both;
-    }
-
-    .duck-cloud-label {
-      font-size: 0.75rem;
-      font-weight: 900;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.7rem;
-      text-align: center;
-    }
+    .duck-cloud-wrap { width: 100%; animation: popIn 0.6s 0.2s cubic-bezier(0.34,1.56,0.64,1) both; }
+    .duck-cloud-label { font-size: 0.75rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.7rem; text-align: center; }
 
     .duck-cloud-outer {
-      position: relative;
-      width: 100%;
-      height: 160px;
-      background: var(--card);
-      border: 2px solid rgba(255,214,0,0.12);
-      border-radius: 20px;
-      overflow: hidden;
-      cursor: grab;
-      user-select: none;
+      position: relative; width: 100%; height: 160px;
+      background: var(--card); border: 2px solid rgba(255,214,0,0.12);
+      border-radius: 20px; overflow: hidden;
+      cursor: grab; user-select: none;
     }
-
     .duck-cloud-outer:active { cursor: grabbing; }
 
-    /* fade edges */
-    .duck-cloud-outer::before,
-    .duck-cloud-outer::after {
-      content: '';
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 48px;
-      z-index: 2;
-      pointer-events: none;
+    /* Fade edges — use a separate overlay div, NOT ::before/::after on the scrollable container */
+    .cloud-fade-left, .cloud-fade-right {
+      position: absolute; top: 0; bottom: 0; width: 48px; z-index: 2; pointer-events: none;
     }
-    .duck-cloud-outer::before {
-      left: 0;
-      background: linear-gradient(to right, var(--card), transparent);
+    .cloud-fade-left  { left: 0;  background: linear-gradient(to right, var(--card), transparent); border-radius: 18px 0 0 18px; }
+    .cloud-fade-right { right: 0; background: linear-gradient(to left,  var(--card), transparent); border-radius: 0 18px 18px 0; }
+
+    .duck-cloud-scroll {
+      width: 100%; height: 100%;
+      overflow-x: auto; overflow-y: hidden;
+      scrollbar-width: none; -ms-overflow-style: none;
     }
-    .duck-cloud-outer::after {
-      right: 0;
-      background: linear-gradient(to left, var(--card), transparent);
-    }
+    .duck-cloud-scroll::-webkit-scrollbar { display: none; }
 
     .duck-cloud-inner {
-      position: absolute;
-      top: 0; left: 0;
-      height: 100%;
+      position: relative; height: 100%;
       /* width set by JS */
-      will-change: transform;
     }
 
     .duck-name-tag {
       position: absolute;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.3rem 0.75rem;
-      border-radius: 999px;
-      font-family: 'Fredoka One', cursive;
-      font-size: 0.95rem;
-      white-space: nowrap;
-      pointer-events: none;
-      border: 1px solid;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.3rem 0.75rem; border-radius: 999px;
+      font-family: 'Fredoka One', cursive; font-size: 0.95rem;
+      white-space: nowrap; pointer-events: none; border: 1px solid;
       animation: nameFloat ease-in-out infinite alternate;
     }
-
     @keyframes nameFloat {
       from { transform: translateY(0px); }
       to   { transform: translateY(-7px); }
     }
 
-    .scroll-hint {
-      text-align: center;
-      font-size: 0.7rem;
-      color: rgba(184,160,96,0.4);
-      margin-top: 0.45rem;
-      letter-spacing: 0.06em;
-    }
+    .scroll-hint { text-align: center; font-size: 0.7rem; color: rgba(184,160,96,0.4); margin-top: 0.45rem; letter-spacing: 0.06em; }
 
     /* ---- NICKNAME MODAL ---- */
     .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(6px);
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+      z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem;
       animation: fadeIn 0.25s ease both;
     }
-
     .modal-backdrop.hidden { display: none; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .modal {
-      background: var(--card);
-      border: 2px solid rgba(255,214,0,0.25);
-      border-radius: 24px;
-      padding: 2.2rem 2rem;
-      max-width: 380px;
-      width: 100%;
-      text-align: center;
+      background: var(--card); border: 2px solid rgba(255,214,0,0.25); border-radius: 24px;
+      padding: 2.2rem 2rem; max-width: 380px; width: 100%; text-align: center;
       box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,214,0,0.08);
       animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
     }
-
     .modal-duck { font-size: 3.5rem; display: block; margin-bottom: 0.5rem; }
-
-    .modal-title {
-      font-family: 'Fredoka One', cursive;
-      font-size: 1.8rem;
-      color: var(--yellow);
-      margin-bottom: 0.3rem;
-    }
-
-    .modal-sub {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-bottom: 1.4rem;
-      line-height: 1.5;
-    }
-
+    .modal-title { font-family: 'Fredoka One', cursive; font-size: 1.8rem; color: var(--yellow); margin-bottom: 0.3rem; }
+    .modal-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.4rem; line-height: 1.5; }
     .modal-input {
-      width: 100%;
-      padding: 0.85rem 1.1rem;
-      background: rgba(0,0,0,0.35);
-      border: 2px solid rgba(255,214,0,0.2);
-      border-radius: 12px;
-      color: var(--white);
-      font-family: 'Fredoka One', cursive;
-      font-size: 1.15rem;
-      text-align: center;
-      outline: none;
-      transition: border-color 0.2s;
-      margin-bottom: 1rem;
+      width: 100%; padding: 0.85rem 1.1rem;
+      background: rgba(0,0,0,0.35); border: 2px solid rgba(255,214,0,0.2); border-radius: 12px;
+      color: var(--white); font-family: 'Fredoka One', cursive; font-size: 1.15rem;
+      text-align: center; outline: none; transition: border-color 0.2s; margin-bottom: 1rem;
     }
-
     .modal-input::placeholder { color: rgba(184,160,96,0.4); }
-
-    .modal-input:focus {
-      border-color: rgba(255,214,0,0.55);
-    }
-
+    .modal-input:focus { border-color: rgba(255,214,0,0.55); }
     .modal-btn {
-      width: 100%;
-      padding: 0.9rem;
-      background: var(--yellow);
-      color: var(--dark);
-      font-family: 'Fredoka One', cursive;
-      font-size: 1.25rem;
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      letter-spacing: 0.05em;
-      transition: transform 0.15s, box-shadow 0.15s;
+      width: 100%; padding: 0.9rem; background: var(--yellow); color: var(--dark);
+      font-family: 'Fredoka One', cursive; font-size: 1.25rem; border: none; border-radius: 14px;
+      cursor: pointer; letter-spacing: 0.05em; transition: transform 0.15s, box-shadow 0.15s;
       box-shadow: 0 4px 0 var(--orange), 0 8px 20px rgba(255,214,0,0.2);
     }
-
-    .modal-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 var(--orange), 0 12px 30px rgba(255,214,0,0.3);
-    }
-
-    .modal-btn:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px 0 var(--orange);
-    }
-
+    .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--orange), 0 12px 30px rgba(255,214,0,0.3); }
+    .modal-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--orange); }
     .modal-skip {
-      margin-top: 0.8rem;
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      letter-spacing: 0.04em;
-      text-decoration: underline;
-      opacity: 0.6;
-      transition: opacity 0.2s;
+      margin-top: 0.8rem; background: none; border: none; color: var(--muted);
+      font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.04em; text-decoration: underline; opacity: 0.6; transition: opacity 0.2s; display: block; width: 100%;
     }
     .modal-skip:hover { opacity: 1; }
 
     /* Splash overlay */
     .splash {
-      position: fixed;
-      inset: 0;
-      background: rgba(255,214,0,0.92);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
+      position: fixed; inset: 0; background: rgba(255,214,0,0.92);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 100; opacity: 0; pointer-events: none;
     }
-
-    .splash.show {
-      animation: splashAnim 1.8s ease forwards;
-      pointer-events: all;
-    }
-
+    .splash.show { animation: splashAnim 1.8s ease forwards; pointer-events: all; }
     @keyframes splashAnim {
-      0%   { opacity: 0; }
-      15%  { opacity: 1; }
-      70%  { opacity: 1; }
-      100% { opacity: 0; }
+      0%  { opacity: 0; } 15% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; }
     }
-
     .splash-emoji { font-size: 8rem; animation: spin 0.6s ease; }
     @keyframes spin { from { transform: rotate(-20deg) scale(0.5); } to { transform: rotate(0deg) scale(1); } }
-    .splash-text {
-      font-family: 'Fredoka One', cursive;
-      font-size: 3rem;
-      color: var(--dark);
-      margin-top: 0.5rem;
-      text-align: center;
-    }
+    .splash-text { font-family: 'Fredoka One', cursive; font-size: 3rem; color: var(--dark); margin-top: 0.5rem; text-align: center; }
     .splash-sub { font-size: 1.1rem; color: var(--dark); opacity: 0.7; font-weight: 700; margin-top: 0.3rem; }
 
-    /* Message box */
+    /* Message card */
     .message-card {
-      background: var(--card);
-      border: 2px solid rgba(255,214,0,0.12);
-      border-radius: 20px;
-      padding: 1.8rem;
-      width: 100%;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      background: var(--card); border: 2px solid rgba(255,214,0,0.12); border-radius: 20px;
+      padding: 1.8rem; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.4);
       animation: popIn 0.6s 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
     }
-
-    .message-title {
-      font-size: 0.75rem;
-      font-weight: 900;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
-
-    .instruction-text {
-      font-size: 1rem;
-      font-weight: 900;
-      color: var(--white);
-      text-align: center;
-      line-height: 1.4;
-      margin-bottom: 0.8rem;
-    }
-
+    .message-title { font-size: 0.75rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+    .instruction-text { font-size: 1rem; font-weight: 900; color: var(--white); text-align: center; line-height: 1.4; margin-bottom: 0.8rem; }
     .instruction-text span { color: var(--yellow); }
-
     .message-box {
-      background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,214,0,0.1);
-      border-radius: 12px;
-      padding: 1.2rem 1.4rem;
-      font-family: 'Courier New', monospace;
-      font-size: 0.88rem;
-      line-height: 1.7;
-      color: var(--accent);
-      white-space: pre-wrap;
-      word-break: break-word;
-      user-select: all;
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,214,0,0.1); border-radius: 12px;
+      padding: 1.2rem 1.4rem; font-family: 'Courier New', monospace; font-size: 0.88rem;
+      line-height: 1.7; color: var(--accent); white-space: pre-wrap; word-break: break-word; user-select: all;
     }
-
     .copy-btn {
-      margin-top: 1rem;
-      width: 100%;
-      padding: 1rem;
-      background: var(--yellow);
-      color: var(--dark);
-      font-family: 'Fredoka One', cursive;
-      font-size: 1.3rem;
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      letter-spacing: 0.05em;
-      transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
-      box-shadow: 0 4px 0 var(--orange), 0 8px 20px rgba(255,214,0,0.2);
-      position: relative;
-      top: 0;
+      margin-top: 1rem; width: 100%; padding: 1rem; background: var(--yellow); color: var(--dark);
+      font-family: 'Fredoka One', cursive; font-size: 1.3rem; border: none; border-radius: 14px;
+      cursor: pointer; letter-spacing: 0.05em; transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+      box-shadow: 0 4px 0 var(--orange), 0 8px 20px rgba(255,214,0,0.2); position: relative; top: 0;
     }
+    .copy-btn:hover { background: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 0 var(--orange), 0 12px 30px rgba(255,214,0,0.3); }
+    .copy-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--orange), 0 4px 12px rgba(255,214,0,0.15); top: 2px; }
+    .copy-btn.copied { background: #66cc66; box-shadow: 0 4px 0 #339933, 0 8px 20px rgba(102,204,102,0.25); }
 
-    .copy-btn:hover {
-      background: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 var(--orange), 0 12px 30px rgba(255,214,0,0.3);
+    /* ---- ACCOUNT CARD ---- */
+    .account-card {
+      background: var(--card); border: 2px solid rgba(255,214,0,0.1); border-radius: 20px;
+      padding: 1.6rem 1.8rem; width: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      animation: popIn 0.6s 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
     }
+    .account-title { font-size: 0.75rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.2rem; }
+    .account-row { display: flex; gap: 0.7rem; }
+    .acct-btn {
+      flex: 1; padding: 0.75rem 0.5rem; border: none; border-radius: 12px;
+      font-family: 'Fredoka One', cursive; font-size: 1rem; cursor: pointer;
+      letter-spacing: 0.03em; transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+    }
+    .acct-btn.rename {
+      background: rgba(255,214,0,0.12); color: var(--yellow);
+      border: 1px solid rgba(255,214,0,0.3);
+    }
+    .acct-btn.rename:hover { background: rgba(255,214,0,0.2); transform: translateY(-1px); }
+    .acct-btn.unquack {
+      background: rgba(200,50,50,0.12); color: #ff6b6b;
+      border: 1px solid rgba(200,50,50,0.3);
+    }
+    .acct-btn.unquack:hover { background: rgba(200,50,50,0.22); transform: translateY(-1px); }
 
-    .copy-btn:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px 0 var(--orange), 0 4px 12px rgba(255,214,0,0.15);
-      top: 2px;
+    /* Confirm unquack dialog (inline) */
+    .unquack-confirm {
+      margin-top: 1rem; padding: 1rem 1.2rem;
+      background: rgba(200,50,50,0.08); border: 1px solid rgba(200,50,50,0.25); border-radius: 12px;
+      display: none;
     }
+    .unquack-confirm.show { display: block; }
+    .unquack-confirm p { font-size: 0.88rem; color: #ff8888; line-height: 1.5; margin-bottom: 0.8rem; font-weight: 700; }
+    .unquack-confirm-row { display: flex; gap: 0.6rem; }
+    .uq-yes {
+      flex: 1; padding: 0.6rem; background: #cc3333; color: #fff;
+      border: none; border-radius: 10px; font-family: 'Fredoka One', cursive;
+      font-size: 1rem; cursor: pointer; transition: background 0.2s;
+    }
+    .uq-yes:hover { background: #aa2222; }
+    .uq-no {
+      flex: 1; padding: 0.6rem; background: rgba(255,255,255,0.06); color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+      font-family: 'Fredoka One', cursive; font-size: 1rem; cursor: pointer; transition: background 0.2s;
+    }
+    .uq-no:hover { background: rgba(255,255,255,0.1); }
 
-    .copy-btn.copied {
-      background: #66cc66;
-      box-shadow: 0 4px 0 #339933, 0 8px 20px rgba(102,204,102,0.25);
-    }
-
-    .footer {
-      font-size: 0.72rem;
-      color: rgba(184,160,96,0.4);
-      text-align: center;
-      letter-spacing: 0.05em;
-      margin-top: 0.5rem;
-      animation: popIn 0.6s 0.45s both;
-    }
+    .footer { font-size: 0.72rem; color: rgba(184,160,96,0.4); text-align: center; letter-spacing: 0.05em; margin-top: 0.5rem; animation: popIn 0.6s 0.45s both; }
   </style>
 </head>
 <body>
 
   <div class="floaters" id="floaters"></div>
 
-  <!-- Splash -->
   <div class="splash" id="splash">
     <span class="splash-emoji">🦆</span>
     <div class="splash-text">QUACKED!</div>
     <div class="splash-sub">You've joined the flock</div>
   </div>
 
-  <!-- Nickname modal (shown to new ducks after registration) -->
+  <!-- Nickname modal -->
   <div class="modal-backdrop hidden" id="nicknameModal">
     <div class="modal">
       <span class="modal-duck">🦆</span>
-      <div class="modal-title">Pick a Nickname!</div>
-      <div class="modal-sub">Your name will float in the Duckie Cloud<br>for everyone to see.</div>
+      <div class="modal-title" id="modalTitle">Pick a Nickname!</div>
+      <div class="modal-sub" id="modalSub">Your name will float in the Duckie Cloud<br>for everyone to see.</div>
       <input class="modal-input" id="nicknameInput" type="text" maxlength="20" placeholder="e.g. QuackMaster" autocomplete="off" />
       <button class="modal-btn" id="nicknameSubmit">Join the Flock 🦆</button>
       <button class="modal-skip" id="nicknameSkip">Skip (stay anonymous)</button>
@@ -619,7 +344,6 @@
   </div>
 
   <div class="container">
-    <!-- Homepage button -->
     <div class="top-bar">
       <a class="home-btn" href="https://siuozl.github.io" target="_blank">
         <svg viewBox="0 0 20 20"><path d="M10 2L2 9h2v9h5v-5h2v5h5V9h2L10 2z"/></svg>
@@ -647,7 +371,13 @@
     <div class="duck-cloud-wrap">
       <div class="duck-cloud-label">🌤 The Duckie Cloud</div>
       <div class="duck-cloud-outer" id="cloudOuter">
-        <div class="duck-cloud-inner" id="cloudInner"></div>
+        <!-- Fade overlays as sibling divs, NOT pseudo-elements on the scrollable container -->
+        <div class="cloud-fade-left"></div>
+        <div class="cloud-fade-right"></div>
+        <!-- Actual scrollable track -->
+        <div class="duck-cloud-scroll" id="cloudScroll">
+          <div class="duck-cloud-inner" id="cloudInner"></div>
+        </div>
       </div>
       <div class="scroll-hint">← drag to scroll →</div>
     </div>
@@ -659,11 +389,27 @@
       <button class="copy-btn" id="copyBtn" onclick="copyMessage()">🦆 Copy Message</button>
     </div>
 
+    <!-- Account actions -->
+    <div class="account-card" id="accountCard">
+      <div class="account-title">⚙️ Your Duck Settings</div>
+      <div class="account-row">
+        <button class="acct-btn rename" id="renameBtn">✏️ Change Nickname</button>
+        <button class="acct-btn unquack" id="unquackBtn">💀 Unquack</button>
+      </div>
+      <div class="unquack-confirm" id="unquackConfirm">
+        <p>Are you sure? This removes you from the counter and the cloud forever. You'll start fresh if you visit again.</p>
+        <div class="unquack-confirm-row">
+          <button class="uq-yes" id="uqYes">Yes, Unquack me</button>
+          <button class="uq-no" id="uqNo">No, keep me in</button>
+        </div>
+      </div>
+    </div>
+
     <div class="footer">Device ID stored locally · No personal data collected</div>
   </div>
 
   <script>
-    const DB_URL = 'https://duckies-c2be5-default-rtdb.firebaseio.com';
+    const DB_URL    = 'https://duckies-c2be5-default-rtdb.firebaseio.com';
     const DEVICE_KEY = 'quack_device_id';
     const MESSAGE_TEXT = `# |—— QUACK INVASION ——|
 **YOU'VE BEEN 🦆 QUACKED 🦆 !**
@@ -698,64 +444,62 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
 
     // ---- Counter ----
     function bumpCounter(el) {
-      el.classList.remove('bump');
-      void el.offsetWidth;
-      el.classList.add('bump');
+      el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
       setTimeout(() => el.classList.remove('bump'), 300);
     }
-
     function setStatus(type, text) {
       const badge = document.getElementById('statusBadge');
       badge.className = 'status-badge ' + type;
       document.getElementById('statusText').textContent = text;
     }
-
     async function fetchCount() {
       const res = await fetch(`${DB_URL}/ducks.json`);
       const data = await res.json();
       return data ? Object.keys(data).length : 0;
     }
 
+    // ---- Firebase ops ----
     async function registerDuck(deviceId) {
       const checkRes = await fetch(`${DB_URL}/ducks/${deviceId}.json`);
       const existing = await checkRes.json();
       if (existing) return { isNew: false, duckNumber: existing.duckNumber };
 
-      const countRes = await fetch(`${DB_URL}/ducks.json`);
-      const allDucks = await countRes.json();
+      const countRes  = await fetch(`${DB_URL}/ducks.json`);
+      const allDucks  = await countRes.json();
       const duckNumber = allDucks ? Object.keys(allDucks).length + 1 : 1;
 
       await fetch(`${DB_URL}/ducks/${deviceId}.json`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ joinedAt: Date.now(), duckNumber, nickname: null })
       });
-
       return { isNew: true, duckNumber };
     }
 
     async function saveNickname(deviceId, nickname) {
       await fetch(`${DB_URL}/ducks/${deviceId}/nickname.json`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nickname)
       });
     }
 
-    // ---- Duck Cloud ----
-    const CLOUD_COLORS = [
-      { bg: 'rgba(255,214,0,0.12)', text: '#FFD600', border: 'rgba(255,214,0,0.3)' },
-      { bg: 'rgba(255,140,0,0.12)', text: '#FF8C00', border: 'rgba(255,140,0,0.3)' },
-      { bg: 'rgba(255,230,102,0.1)', text: '#ffe066', border: 'rgba(255,230,102,0.25)' },
-      { bg: 'rgba(255,180,0,0.1)',  text: '#ffb800', border: 'rgba(255,180,0,0.25)' },
-    ];
+    async function deleteDuck(deviceId) {
+      await fetch(`${DB_URL}/ducks/${deviceId}.json`, { method: 'DELETE' });
+    }
 
-    // Deterministic random from a string seed (so positions are stable across reloads)
+    // ---- Seeded random ----
     function seededRand(seed) {
       let h = 0;
       for (let i = 0; i < seed.length; i++) h = Math.imul(31, h) + seed.charCodeAt(i) | 0;
       return ((h >>> 0) / 4294967296);
     }
+
+    // ---- Duck Cloud ----
+    const CLOUD_COLORS = [
+      { bg: 'rgba(255,214,0,0.12)',  text: '#FFD600', border: 'rgba(255,214,0,0.3)'  },
+      { bg: 'rgba(255,140,0,0.12)',  text: '#FF8C00', border: 'rgba(255,140,0,0.3)'  },
+      { bg: 'rgba(255,230,102,0.1)', text: '#ffe066', border: 'rgba(255,230,102,0.25)'},
+      { bg: 'rgba(255,180,0,0.1)',   text: '#ffb800', border: 'rgba(255,180,0,0.25)' },
+    ];
 
     function buildCloud(ducks) {
       const inner = document.getElementById('cloudInner');
@@ -770,152 +514,158 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
       const HEIGHT  = 160;
       const PAD_X   = 36;
       const PAD_Y   = 14;
-      const GAP_X   = 14;   // min horizontal gap
-      const GAP_Y   = 10;   // min vertical gap
-      const TAG_H   = 34;   // tag height
+      const GAP_X   = 14;
+      const TAG_H   = 34;
 
-      // Shuffle entries using seeded Fisher-Yates so order is random but stable
+      // Shuffle entries (seeded, stable)
       const entries = Object.entries(ducks);
-      // seed from combined keys for stability
-      const shuffleSeed = entries.map(([k]) => k).join('').length;
       const shuffled = [...entries];
       for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(seededRand(shuffled[i][0] + 'shuffle' + i) * (i + 1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
 
-      // Render all tags hidden first so we can measure real widths
+      // Render hidden first to measure widths
       inner.style.width = '9999px';
       const tagData = shuffled.map(([deviceId, data]) => {
         const isOG = !data.duckNumber;
         const name = (data.nickname && data.nickname.trim())
           ? data.nickname.trim()
           : (isOG ? '👑 OG Duck' : ('Duck #' + data.duckNumber));
-        const color = CLOUD_COLORS[Math.floor(seededRand(deviceId + 'c') * CLOUD_COLORS.length)];
-        const floatDur   = 2.5 + seededRand(deviceId + 'f') * 2;
-        const floatDelay = seededRand(deviceId + 'd') * 2;
-        const fontSize   = 0.82 + seededRand(deviceId + 's') * 0.22;
+        const color    = CLOUD_COLORS[Math.floor(seededRand(deviceId + 'c') * CLOUD_COLORS.length)];
+        const floatDur = 2.5 + seededRand(deviceId + 'f') * 2;
+        const floatDel = seededRand(deviceId + 'd') * 2;
+        const fontSize = 0.82 + seededRand(deviceId + 's') * 0.22;
 
         const el = document.createElement('div');
         el.className = 'duck-name-tag';
         el.style.cssText = [
-          'visibility:hidden',
-          'left:0',
-          'top:-999px',
-          'background:' + color.bg,
-          'color:' + color.text,
-          'border-color:' + color.border,
-          'animation-duration:' + floatDur + 's',
-          'animation-delay:-' + floatDelay + 's',
+          'visibility:hidden','left:0','top:-999px',
+          'background:' + color.bg, 'color:' + color.text, 'border-color:' + color.border,
+          'animation-duration:' + floatDur + 's', 'animation-delay:-' + floatDel + 's',
           'font-size:' + fontSize + 'rem',
         ].join(';');
-        el.textContent = (isOG && !data.nickname ? '🦆 ' : '🦆 ') + name;
+        el.textContent = '🦆 ' + name;
         inner.appendChild(el);
         return { el, deviceId };
       });
 
-      // Measure real widths
+      // Measure
       const measured = tagData.map(t => ({
-        ...t,
-        w: Math.ceil(t.el.getBoundingClientRect().width) + 2, // +2 safety margin
+        ...t, w: Math.ceil(t.el.getBoundingClientRect().width) + 2,
       }));
 
-      // ---- Grid-cloud placement ----
-      // Pack into rows greedily. Each row has a random X offset (per-duck seed)
-      // so rows don't line up perfectly — gives the "cloud" feel.
-      // We fill row by row, each duck going to whichever row currently has
-      // the least rightmost X (like a multi-column bin-pack).
-
+      // 3-row bin-pack with seeded jitter
       const NUM_ROWS = 3;
-      const rowY = [PAD_Y, PAD_Y + (HEIGHT - PAD_Y*2 - TAG_H) / 2, HEIGHT - TAG_H - PAD_Y];
-      // cursors: rightmost filled X per row
+      const rowY = [
+        PAD_Y,
+        PAD_Y + (HEIGHT - PAD_Y * 2 - TAG_H) / 2,
+        HEIGHT - TAG_H - PAD_Y,
+      ];
       const rowCursor = new Array(NUM_ROWS).fill(PAD_X);
-      // placed rects for final overlap safety check
-      const placed = [];
 
       measured.forEach(({ el, deviceId, w }) => {
-        // Pick the row with the smallest cursor (most space on left = tightest pack)
-        // but add a tiny seeded jitter so it's not perfectly mechanical
-        const jitter = seededRand(deviceId + 'row') * 60;
         let bestRow = 0;
-        let bestVal = rowCursor[0] + jitter;
+        let bestVal = rowCursor[0] + seededRand(deviceId + 'row0') * 60;
         for (let r = 1; r < NUM_ROWS; r++) {
           const val = rowCursor[r] + seededRand(deviceId + 'row' + r) * 60;
           if (val < bestVal) { bestVal = val; bestRow = r; }
         }
 
         const x = rowCursor[bestRow];
-        let y = rowY[bestRow];
-
-        // Small random Y nudge within the row's slot (±6px) for organic feel
         const nudge = (seededRand(deviceId + 'yn') - 0.5) * 12;
-        y = Math.max(PAD_Y, Math.min(HEIGHT - TAG_H - PAD_Y, y + nudge));
+        const y = Math.max(PAD_Y, Math.min(HEIGHT - TAG_H - PAD_Y, rowY[bestRow] + nudge));
 
-        el.style.left       = x + 'px';
-        el.style.top        = y + 'px';
+        el.style.left = x + 'px';
+        el.style.top  = y + 'px';
         el.style.visibility = 'visible';
-
-        placed.push({ x, y, w, h: TAG_H });
         rowCursor[bestRow] = x + w + GAP_X;
       });
 
-      const maxX = Math.max(...rowCursor);
-      inner.style.width = (maxX + 60) + 'px';
+      inner.style.width = (Math.max(...rowCursor) + 60) + 'px';
     }
 
-
-    // ---- Draggable scroll ----
+    // ---- Velocity-based inertia scroll ----
     function initCloudScroll() {
-      const outer = document.getElementById('cloudOuter');
-      const inner = document.getElementById('cloudInner');
-      let isDragging = false, startX = 0, scrollLeft = 0;
+      const scroll = document.getElementById('cloudScroll');
+      const outer  = document.getElementById('cloudOuter');
 
+      let vel = 0, rafId = null;
+      let isDragging = false, lastX = 0, lastT = 0;
+
+      function applyInertia() {
+        if (Math.abs(vel) < 0.4) { vel = 0; return; }
+        scroll.scrollLeft += vel;
+        vel *= 0.93; // friction
+        rafId = requestAnimationFrame(applyInertia);
+      }
+
+      function stopInertia() { cancelAnimationFrame(rafId); }
+
+      // Mouse
       outer.addEventListener('mousedown', e => {
-        isDragging = true;
-        startX = e.pageX - outer.offsetLeft;
-        scrollLeft = outer.scrollLeft;
+        stopInertia(); vel = 0; isDragging = true;
+        lastX = e.clientX; lastT = Date.now();
         outer.style.cursor = 'grabbing';
+        e.preventDefault();
       });
       document.addEventListener('mouseup', () => {
+        if (!isDragging) return;
         isDragging = false;
         outer.style.cursor = 'grab';
+        requestAnimationFrame(applyInertia);
       });
-      outer.addEventListener('mousemove', e => {
+      document.addEventListener('mousemove', e => {
         if (!isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - outer.offsetLeft;
-        outer.scrollLeft = scrollLeft - (x - startX);
+        const now = Date.now();
+        const dx = e.clientX - lastX;
+        const dt = now - lastT || 1;
+        vel = -dx / dt * 16; // scale to ~60fps frame
+        scroll.scrollLeft -= dx;
+        lastX = e.clientX; lastT = now;
       });
 
-      // Touch support
-      let touchStartX = 0, touchScrollLeft = 0;
+      // Touch
+      let touchLastX = 0, touchLastT = 0;
       outer.addEventListener('touchstart', e => {
-        touchStartX = e.touches[0].pageX;
-        touchScrollLeft = outer.scrollLeft;
+        stopInertia(); vel = 0;
+        touchLastX = e.touches[0].clientX; touchLastT = Date.now();
       }, { passive: true });
       outer.addEventListener('touchmove', e => {
-        const dx = e.touches[0].pageX - touchStartX;
-        outer.scrollLeft = touchScrollLeft - dx;
+        const now = Date.now();
+        const dx = e.touches[0].clientX - touchLastX;
+        const dt = now - touchLastT || 1;
+        vel = -dx / dt * 16;
+        scroll.scrollLeft -= dx;
+        touchLastX = e.touches[0].clientX; touchLastT = now;
       }, { passive: true });
-
-      // Make the outer div scrollable horizontally
-      outer.style.overflowX = 'auto';
-      outer.style.overflowY = 'hidden';
-      outer.style.scrollbarWidth = 'none'; // Firefox
-      outer.style.msOverflowStyle = 'none';
-      // Webkit
-      const style = document.createElement('style');
-      style.textContent = '.duck-cloud-outer::-webkit-scrollbar { display: none; }';
-      document.head.appendChild(style);
+      outer.addEventListener('touchend', () => {
+        requestAnimationFrame(applyInertia);
+      }, { passive: true });
     }
 
     // ---- Nickname modal ----
-    function showNicknameModal(deviceId, onDone) {
-      const modal = document.getElementById('nicknameModal');
-      const input = document.getElementById('nicknameInput');
+    function showNicknameModal(deviceId, { isRename = false, onDone } = {}) {
+      const modal     = document.getElementById('nicknameModal');
+      const input     = document.getElementById('nicknameInput');
       const submitBtn = document.getElementById('nicknameSubmit');
-      const skipBtn = document.getElementById('nicknameSkip');
+      const skipBtn   = document.getElementById('nicknameSkip');
+      const titleEl   = document.getElementById('modalTitle');
+      const subEl     = document.getElementById('modalSub');
 
+      if (isRename) {
+        titleEl.textContent = 'Change Nickname';
+        subEl.textContent   = 'Enter a new name for your duck.';
+        submitBtn.textContent = 'Save Nickname 🦆';
+        skipBtn.textContent = 'Cancel';
+      } else {
+        titleEl.textContent = 'Pick a Nickname!';
+        subEl.innerHTML = 'Your name will float in the Duckie Cloud<br>for everyone to see.';
+        submitBtn.textContent = 'Join the Flock 🦆';
+        skipBtn.textContent = 'Skip (stay anonymous)';
+      }
+
+      input.value = '';
       modal.classList.remove('hidden');
       setTimeout(() => input.focus(), 100);
 
@@ -923,12 +673,44 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
         const nickname = input.value.trim().slice(0, 20);
         modal.classList.add('hidden');
         if (nickname) await saveNickname(deviceId, nickname);
-        onDone();
+        if (onDone) onDone();
       }
 
       submitBtn.onclick = submit;
-      skipBtn.onclick = () => { modal.classList.add('hidden'); onDone(); };
-      input.onkeydown = e => { if (e.key === 'Enter') submit(); };
+      skipBtn.onclick   = () => { modal.classList.add('hidden'); if (onDone) onDone(); };
+      input.onkeydown   = e => { if (e.key === 'Enter') submit(); };
+    }
+
+    // ---- Account card ----
+    function initAccountCard(deviceId) {
+      const renameBtn = document.getElementById('renameBtn');
+      const unquackBtn = document.getElementById('unquackBtn');
+      const confirm    = document.getElementById('unquackConfirm');
+      const uqYes      = document.getElementById('uqYes');
+      const uqNo       = document.getElementById('uqNo');
+
+      renameBtn.onclick = () => {
+        showNicknameModal(deviceId, {
+          isRename: true,
+          onDone: async () => {
+            const updated = await fetch(`${DB_URL}/ducks.json`).then(r => r.json());
+            buildCloud(updated);
+          }
+        });
+      };
+
+      unquackBtn.onclick = () => {
+        confirm.classList.toggle('show');
+      };
+
+      uqNo.onclick = () => confirm.classList.remove('show');
+
+      uqYes.onclick = async () => {
+        await deleteDuck(deviceId);
+        localStorage.removeItem(DEVICE_KEY);
+        // Reload so they start fresh
+        window.location.reload();
+      };
     }
 
     // ---- Init ----
@@ -938,6 +720,7 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
       initCloudScroll();
 
       const deviceId = getOrCreateDeviceId();
+      initAccountCard(deviceId);
 
       try {
         const { isNew, duckNumber } = await registerDuck(deviceId);
@@ -947,49 +730,49 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
         counterEl.textContent = count;
         bumpCounter(counterEl);
 
-        // Load the cloud
-        const allRes = await fetch(`${DB_URL}/ducks.json`);
+        const allRes  = await fetch(`${DB_URL}/ducks.json`);
         const allDucks = await allRes.json();
         buildCloud(allDucks);
 
         if (isNew) {
           setStatus('new-duck', duckNumber ? `🦆 You are Duck #${duckNumber}!` : `👑 You are an OG Duck!`);
-          // Show splash then nickname modal
           const splash = document.getElementById('splash');
           splash.classList.add('show');
           setTimeout(() => {
             splash.classList.remove('show');
-            // After splash, show nickname modal, then refresh cloud
-            showNicknameModal(deviceId, async () => {
-              const updated = await fetch(`${DB_URL}/ducks.json`);
-              buildCloud(await updated.json());
+            showNicknameModal(deviceId, {
+              onDone: async () => {
+                const updated = await fetch(`${DB_URL}/ducks.json`).then(r => r.json());
+                buildCloud(updated);
+              }
             });
           }, 1800);
         } else {
           setStatus('returning', duckNumber ? `👋 Welcome back, Duck #${duckNumber}!` : `👑 Welcome back, OG Duck!`);
-          // OG duck with no nickname yet — offer them the chance to set one
           const myData = await fetch(`${DB_URL}/ducks/${deviceId}.json`).then(r => r.json());
           if (!duckNumber && (!myData.nickname || !myData.nickname.trim())) {
-            showNicknameModal(deviceId, async () => {
-              const updated = await fetch(`${DB_URL}/ducks.json`);
-              buildCloud(await updated.json());
+            showNicknameModal(deviceId, {
+              onDone: async () => {
+                const updated = await fetch(`${DB_URL}/ducks.json`).then(r => r.json());
+                buildCloud(updated);
+              }
             });
           }
         }
 
-        // Poll for new ducks
+        // Poll
         setInterval(async () => {
           const c = await fetchCount();
           if (c !== parseInt(counterEl.textContent)) {
             counterEl.textContent = c;
             bumpCounter(counterEl);
-            const updated = await fetch(`${DB_URL}/ducks.json`);
-            buildCloud(await updated.json());
+            const updated = await fetch(`${DB_URL}/ducks.json`).then(r => r.json());
+            buildCloud(updated);
           }
         }, 5000);
 
       } catch (e) {
-        setStatus('loading', '⚠️ Couldn\'t reach the flock');
+        setStatus('loading', "⚠️ Couldn't reach the flock");
         document.getElementById('counter').textContent = '?';
         console.error(e);
       }
@@ -999,18 +782,13 @@ Open **[this link](https://siuozl.github.io/quack)** to add to the Quack Counter
     function copyMessage() {
       const btn = document.getElementById('copyBtn');
       navigator.clipboard.writeText(MESSAGE_TEXT).then(() => {
-        btn.textContent = '✅ Copied!';
-        btn.classList.add('copied');
+        btn.textContent = '✅ Copied!'; btn.classList.add('copied');
         setTimeout(() => { btn.textContent = '🦆 Copy Message'; btn.classList.remove('copied'); }, 2000);
       }).catch(() => {
         const ta = document.createElement('textarea');
-        ta.value = MESSAGE_TEXT;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        btn.textContent = '✅ Copied!';
-        btn.classList.add('copied');
+        ta.value = MESSAGE_TEXT; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        btn.textContent = '✅ Copied!'; btn.classList.add('copied');
         setTimeout(() => { btn.textContent = '🦆 Copy Message'; btn.classList.remove('copied'); }, 2000);
       });
     }
