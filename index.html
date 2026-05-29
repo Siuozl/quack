@@ -229,15 +229,24 @@
     .lb-row.rank-2 { background: rgba(192,192,192,0.05); }
     .lb-row.rank-3 { background: rgba(205,127,50,0.06); }
 
-    /* sticky "me" row */
+    /* "me" row in list */
     .lb-row.is-me {
       background: rgba(255,214,0,0.1) !important;
       border-top: 1px solid rgba(255,214,0,0.2);
       border-bottom: 1px solid rgba(255,214,0,0.2);
-      position: sticky; z-index: 4;
     }
-    .lb-row.is-me.sticky-top    { top: 0; }
-    .lb-row.is-me.sticky-bottom { bottom: 0; }
+
+    /* floating clone that sticks to top/bottom when real row scrolls out */
+    .lb-sticky-clone {
+      display: none;
+      position: absolute; left: 0; right: 0; z-index: 10;
+      background: #2a2000;
+      border: 1px solid rgba(255,214,0,0.3);
+      pointer-events: none;
+    }
+    .lb-sticky-clone.visible { display: grid; }
+    .lb-sticky-clone.at-top    { top: 0;    border-top: none;    border-radius: 0; }
+    .lb-sticky-clone.at-bottom { bottom: 0; border-bottom: none; border-radius: 0; }
 
     .lb-rank {
       font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--muted);
@@ -671,24 +680,46 @@
       list.appendChild(row);
     });
 
-    // Sticky my-row logic
-    const lbScroll = document.getElementById('lbScroll');
-    const myRow    = document.getElementById('lbMyRow');
+    // Sticky clone logic — no flashing
+    const lbScroll  = document.getElementById('lbScroll');
+    const lbCard    = document.querySelector('.leaderboard-card');
+    const myRow     = document.getElementById('lbMyRow');
     if (!myRow) return;
 
-    function updateStickyClass() {
+    // Remove old clone if rebuilding
+    const existingClone = lbCard.querySelector('.lb-sticky-clone');
+    if (existingClone) existingClone.remove();
+
+    // Create a clone of the my-row that floats outside the scroll container
+    const clone = myRow.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.classList.add('lb-sticky-clone');
+    // copy computed grid layout from lb-row
+    clone.style.gridTemplateColumns = '52px 1fr auto';
+    clone.style.gap = '0.5rem';
+    clone.style.padding = '0.75rem 1.1rem';
+    clone.style.minHeight = '51px';
+    clone.style.alignItems = 'center';
+    lbCard.style.position = 'relative';
+    lbCard.appendChild(clone);
+
+    function updateClone() {
       const myRect     = myRow.getBoundingClientRect();
       const scrollRect = lbScroll.getBoundingClientRect();
-      myRow.classList.remove('sticky-top', 'sticky-bottom');
-      if (myRect.top < scrollRect.top) {
-        myRow.classList.add('sticky-top');
-      } else if (myRect.bottom > scrollRect.bottom) {
-        myRow.classList.add('sticky-bottom');
+      clone.classList.remove('visible', 'at-top', 'at-bottom');
+
+      if (myRect.bottom <= scrollRect.top) {
+        // real row is above the visible area — pin clone to top
+        clone.classList.add('visible', 'at-top');
+      } else if (myRect.top >= scrollRect.bottom) {
+        // real row is below the visible area — pin clone to bottom
+        clone.classList.add('visible', 'at-bottom');
       }
+      // otherwise real row is visible — clone stays hidden
     }
 
-    lbScroll.addEventListener('scroll', updateStickyClass);
-    setTimeout(updateStickyClass, 50);
+    lbScroll.addEventListener('scroll', updateClone, { passive: true });
+    setTimeout(updateClone, 60);
   }
 
   // ---- Nickname modal ----
